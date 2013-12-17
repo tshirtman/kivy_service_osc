@@ -12,10 +12,10 @@ BoxLayout:
     orientation: 'vertical'
     BoxLayout:
         size_hint_y: None
-        height: 30
+        height: '30sp'
         Button:
             text: 'start service'
-            on_press: app.stop_service()
+            on_press: app.start_service()
         Button:
             text: 'stop service'
             on_press: app.stop_service()
@@ -29,7 +29,7 @@ BoxLayout:
 
     BoxLayout:
         size_hint_y: None
-        height: 30
+        height: '30sp'
         Button:
             text: 'ping'
             on_press: app.send()
@@ -51,13 +51,14 @@ class ClientServerApp(App):
         osc.bind(oscid, self.display_message, '/message')
         osc.bind(oscid, self.date, '/date')
         Clock.schedule_interval(lambda *x: osc.readQueue(oscid), 0)
-        return Builder.load_string(kv)
+        self.root = Builder.load_string(kv)
+        return self.root
 
     def start_service(self):
         if platform == 'android':
-            from android.service import AndroidService
+            from android import AndroidService
             service = AndroidService('my pong service', 'running')
-            service.start('')
+            service.start('service started')
             self.service = service
 
     def stop_service(self):
@@ -69,10 +70,12 @@ class ClientServerApp(App):
         osc.sendMsg('/ping', [], port=3000)
 
     def display_message(self, message, *args):
-        self.root.ids.label.text += '%s\n' % message[2]
+        if self.root:
+            self.root.ids.label.text += '%s\n' % message[2]
 
     def date(self, message, *args):
-        self.root.ids.date.text = message[2]
+        if self.root:
+            self.root.ids.date.text = message[2]
 
 
 if __name__ == '__main__':
