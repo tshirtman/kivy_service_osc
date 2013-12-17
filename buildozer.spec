@@ -1,7 +1,7 @@
 [app]
 
 # (str) Title of your application
-title = "Kivy service OSC demo"
+title = Kivy service OSC demo
 
 # (str) Package name
 package.name = oscservice
