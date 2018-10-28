@@ -1,11 +1,18 @@
-__version__ = '0.1'
+__version__ = '0.2'
 
 from kivy.app import App
 from kivy.lang import Builder
 from kivy.lib import osc
 from kivy.clock import Clock
 from kivy.utils import platform
+from jnius import autoclass
+
 platform = platform()
+
+SERVICE_NAME = '{packagename}.Service{servicename}'.format(
+    packagename='org.kivy.oscservice',
+    servicename='Pong'
+)
 
 kv = '''
 BoxLayout:
@@ -41,7 +48,6 @@ BoxLayout:
 
 '''
 
-
 class ClientServerApp(App):
     def build(self):
         self.service = None
@@ -56,9 +62,10 @@ class ClientServerApp(App):
 
     def start_service(self):
         if platform == 'android':
-            from android import AndroidService
-            service = AndroidService('my pong service', 'running')
-            service.start('service started')
+            service = autoclass(SERVICE_NAME)
+            mActivity = autoclass('org.kivy.android.PythonActivity').mActivity
+            argument = ''
+            service.start(mActivity, argument)
             self.service = service
 
     def stop_service(self):

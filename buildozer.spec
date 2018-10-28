@@ -43,6 +43,8 @@ requirements = kivy
 # (str) Supported orientation (one of landscape, portrait or all)
 orientation = all
 
+services = Pong:service.py
+
 # (bool) Indicate if the application should be fullscreen or not
 fullscreen = 0
 
