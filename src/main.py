@@ -2,19 +2,19 @@ __version__ = '0.2'
 
 from kivy.app import App
 from kivy.lang import Builder
-from kivy.lib import osc
 from kivy.clock import Clock
 from kivy.utils import platform
-from jnius import autoclass
 
-platform = platform()
+from oscpy.client import OSCClient
+from oscpy.server import OSCThreadServer
+
 
 SERVICE_NAME = '{packagename}.Service{servicename}'.format(
     packagename='org.kivy.oscservice',
     servicename='Pong'
 )
 
-kv = '''
+KV = '''
 BoxLayout:
     orientation: 'vertical'
     BoxLayout:
@@ -51,22 +51,45 @@ BoxLayout:
 class ClientServerApp(App):
     def build(self):
         self.service = None
-        self.start_service()
-        osc.init()
-        oscid = osc.listen(port=3002)
-        osc.bind(oscid, self.display_message, '/message')
-        osc.bind(oscid, self.date, '/date')
-        Clock.schedule_interval(lambda *x: osc.readQueue(oscid), 0)
-        self.root = Builder.load_string(kv)
+        # self.start_service()
+
+        self.server = server = OSCThreadServer()
+        server.listen(
+            address='localhost',
+            port=3002,
+            default=True,
+        )
+
+        server.bind(b'/message', self.display_message)
+        server.bind(b'/date', self.date)
+
+        self.client = OSCClient('localhost', 3000)
+        self.root = Builder.load_string(KV)
         return self.root
 
     def start_service(self):
         if platform == 'android':
+            from jnius import autoclass
             service = autoclass(SERVICE_NAME)
             mActivity = autoclass('org.kivy.android.PythonActivity').mActivity
             argument = ''
             service.start(mActivity, argument)
             self.service = service
+
+        elif platform in ('linux', 'linux2', 'macos', 'win'):
+            from runpy import run_path
+            from threading import Thread
+            self.service = Thread(
+                target=run_path,
+                args=['src/service.py'],
+                kwargs={'run_name': '__main__'},
+                daemon=True
+            )
+            self.service.start()
+        else:
+            raise NotImplementedError(
+                "service start not implemented on this platform"
+            )
 
     def stop_service(self):
         if self.service:
@@ -74,15 +97,15 @@ class ClientServerApp(App):
             self.service = None
 
     def send(self, *args):
-        osc.sendMsg('/ping', [], port=3000)
+        self.client.send_message(b'/ping', [])
 
-    def display_message(self, message, *args):
+    def display_message(self, message):
         if self.root:
-            self.root.ids.label.text += '%s\n' % message[2]
+            self.root.ids.label.text += '{}\n'.format(message.decode('utf8'))
 
-    def date(self, message, *args):
+    def date(self, message):
         if self.root:
-            self.root.ids.date.text = message[2]
+            self.root.ids.date.text = message.decode('utf8')
 
 
 if __name__ == '__main__':
