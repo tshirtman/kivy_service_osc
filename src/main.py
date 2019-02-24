@@ -1,3 +1,4 @@
+# coding: utf8
 __version__ = '0.2'
 
 from kivy.app import App
@@ -5,13 +6,15 @@ from kivy.lang import Builder
 from kivy.clock import Clock
 from kivy.utils import platform
 
+from jnius import autoclass
+
 from oscpy.client import OSCClient
 from oscpy.server import OSCThreadServer
 
 
-SERVICE_NAME = '{packagename}.Service{servicename}'.format(
-    packagename='org.kivy.oscservice',
-    servicename='Pong'
+SERVICE_NAME = u'{packagename}.Service{servicename}'.format(
+    packagename=u'org.kivy.oscservice',
+    servicename=u'Pong'
 )
 
 KV = '''
@@ -55,7 +58,7 @@ class ClientServerApp(App):
 
         self.server = server = OSCThreadServer()
         server.listen(
-            address='localhost',
+            address=b'localhost',
             port=3002,
             default=True,
         )
@@ -63,15 +66,14 @@ class ClientServerApp(App):
         server.bind(b'/message', self.display_message)
         server.bind(b'/date', self.date)
 
-        self.client = OSCClient('localhost', 3000)
+        self.client = OSCClient(b'localhost', 3000)
         self.root = Builder.load_string(KV)
         return self.root
 
     def start_service(self):
         if platform == 'android':
-            from jnius import autoclass
             service = autoclass(SERVICE_NAME)
-            mActivity = autoclass('org.kivy.android.PythonActivity').mActivity
+            mActivity = autoclass(u'org.kivy.android.PythonActivity').mActivity
             argument = ''
             service.start(mActivity, argument)
             self.service = service
