@@ -8,30 +8,45 @@ from oscpy.client import OSCClient
 
 CLIENT = OSCClient('localhost', 3002)
 
+stopFlag = False
+
 
 def ping(*_):
     'answer to ping messages'
+    msg = 'service: ' + ''.join(sample(ascii_letters, randint(10, 20))) # <---------- 
     CLIENT.send_message(
         b'/message',
         [
-            ''.join(sample(ascii_letters, randint(10, 20)))
-            .encode('utf8'),
+            msg.encode('utf8'),
         ],
     )
 
 
 def send_date():
     'send date to the application'
+    global stopFlag
+
+    if stopFlag:
+        msg = 'service stopped'
+    else:
+        msg = asctime(localtime())
+
     CLIENT.send_message(
         b'/date',
-        [asctime(localtime()).encode('utf8'), ],
+        [msg.encode('utf8'), ]
     )
 
-
+def stop():
+    global stopFlag
+    stopFlag=True
+    SERVER.close()
+    
 if __name__ == '__main__':
     SERVER = OSCThreadServer()
     SERVER.listen('localhost', port=3000, default=True)
     SERVER.bind(b'/ping', ping)
-    while True:
+    SERVER.bind(b'/stop', stop)    # stop service when receiving 'stop msg
+
+    while not stopFlag:
         sleep(1)
         send_date()

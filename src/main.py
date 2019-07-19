@@ -6,16 +6,9 @@ from kivy.lang import Builder
 from kivy.clock import Clock
 from kivy.utils import platform
 
-from jnius import autoclass
-
 from oscpy.client import OSCClient
 from oscpy.server import OSCThreadServer
 
-
-SERVICE_NAME = u'{packagename}.Service{servicename}'.format(
-    packagename=u'org.kivy.oscservice',
-    servicename=u'Pong'
-)
 
 KV = '''
 BoxLayout:
@@ -48,6 +41,7 @@ BoxLayout:
             on_press: label.text = ''
         Label:
             id: date
+            text: 'from service:                '
 
 '''
 
@@ -71,31 +65,40 @@ class ClientServerApp(App):
         return self.root
 
     def start_service(self):
-        if platform == 'android':
-            service = autoclass(SERVICE_NAME)
-            mActivity = autoclass(u'org.kivy.android.PythonActivity').mActivity
-            argument = ''
-            service.start(mActivity, argument)
-            self.service = service
 
-        elif platform in ('linux', 'linux2', 'macos', 'win'):
-            from runpy import run_path
-            from threading import Thread
-            self.service = Thread(
-                target=run_path,
-                args=['src/service.py'],
-                kwargs={'run_name': '__main__'},
-                daemon=True
-            )
-            self.service.start()
-        else:
-            raise NotImplementedError(
-                "service start not implemented on this platform"
-            )
-
+        if  self.service==None:                 # only start service if not already running
+            
+            if platform == 'android':
+                from jnius import autoclass
+                SERVICE_NAME =   u'{packagename}.Service{servicename}'.format(
+                    packagename= u'org.kivy.oscservice',
+                    servicename= u'Pong'
+                )                
+                
+                service = autoclass(SERVICE_NAME)
+                mActivity = autoclass(u'org.kivy.android.PythonActivity').mActivity
+                argument = ''
+                service.start(mActivity, argument)
+                self.service = service
+    
+            elif platform in ('linux', 'linux2', 'macos', 'win'):
+                from runpy import run_path
+                from threading import Thread
+                self.service = Thread(
+                    target=run_path,
+                    args=['./service.py'],
+                    kwargs={'run_name': '__main__'},
+                    daemon=True
+                )
+                self.service.start()
+            else:
+                raise NotImplementedError(
+                    "service start not implemented on this platform"
+                )
+    
     def stop_service(self):
         if self.service:
-            self.service.stop()
+            self.client.send_message(b'/stop', [])  # send 'stop' msg to service 
             self.service = None
 
     def send(self, *args):
@@ -107,7 +110,7 @@ class ClientServerApp(App):
 
     def date(self, message):
         if self.root:
-            self.root.ids.date.text = message.decode('utf8')
+            self.root.ids.date.text = 'from service:' + message.decode('utf8')
 
 
 if __name__ == '__main__':
