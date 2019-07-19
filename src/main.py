@@ -48,8 +48,7 @@ BoxLayout:
 class ClientServerApp(App):
     def build(self):
         self.service = None
-        # self.start_service()
-
+    
         self.server = server = OSCThreadServer()
         server.listen(
             address=b'localhost',
