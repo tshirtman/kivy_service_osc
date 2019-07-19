@@ -48,7 +48,7 @@ BoxLayout:
 class ClientServerApp(App):
     def build(self):
         self.service = None
-    
+
         self.server = server = OSCThreadServer()
         server.listen(
             address=b'localhost',
@@ -65,13 +65,14 @@ class ClientServerApp(App):
 
     def start_service(self):
 
-        if  self.service==None:                 # only start service if not already running
+        if  self.service==None:                         # only start service if not already running
             
             if platform == 'android':
                 from jnius import autoclass
-                SERVICE_NAME =   u'{packagename}.Service{servicename}'.format(
-                    packagename= u'org.kivy.oscservice',
-                    servicename= u'Pong'
+                SERVICE_NAME =   u'{packagedomain}.{packagename}.Service{servicename}'.format(
+                    packagedomain = u'org.kivy',               # same as in buildozer.spec
+                    packagename=    u'oscservice',
+                    servicename=    u'Myservice'               # MUST start with a capital letter !
                 )                
                 
                 service = autoclass(SERVICE_NAME)
