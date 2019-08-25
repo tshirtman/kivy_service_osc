@@ -28,5 +28,5 @@ jobs:
           key: buildozer-home-{{ checksum "buildozer.spec" }}
 
       - store_artifacts:
-          path: bin/*.apk
+          path: bin/
           destination: bin/

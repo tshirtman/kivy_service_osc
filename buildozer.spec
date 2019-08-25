@@ -94,9 +94,6 @@ android.api = 26
 # (int) Minimum API required. You will need to set the android.ndk.api to be as low as this value.
 android.minapi = 21
 
-# (int) Android SDK version to use
-android.sdk = 21
-
 # (str) Android NDK version to use
 android.ndk = 17c
 
