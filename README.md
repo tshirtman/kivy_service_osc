@@ -1,8 +1,6 @@
 Purpose
 =======
 
-[![CircleCI](https://circleci.com/gh/tshirtman/kivy_service_osc/tree/master.svg?style=svg)](https://circleci.com/gh/tshirtman/kivy_service_osc/tree/master)
-
 This code aims at demonstrating an use of services in python-for-android, and
 communication between services and a kivy front end.
 
@@ -25,14 +23,10 @@ The service (back-end):
 The UI (front-end):
   - is defined in main.py
   - allows stopping/restarting the backend.
-  - displays the last received messages from the backend in a RecycleView
-  - allow to sent a '/ping' message to the backend, which will trigger a new message.
+  - sends the last received messages as a notification
+  - allow to sent a '/ping' message to the backend, which will trigger a new notification.
 
 Building:
-  - The package is built using CircleCI, you should be able to download the
-    latest debug apk by clicking on the "Artifacts" tab on the latest build.
-  - This project is a template repository, so you can create your own project
-    from it, and setup CircleCI to build your version of it.
   - You can also just run the `kivy/buildozer` docker image to build your project from any Linux computer.
 
   ```

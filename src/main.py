@@ -5,6 +5,7 @@ from kivy.app import App
 from kivy.lang import Builder
 from kivy.clock import Clock
 from kivy.utils import platform
+from plyer import notification
 
 from jnius import autoclass
 
@@ -62,13 +63,17 @@ class ClientServerApp(App):
             port=3002,
             default=True,
         )
-
-        server.bind(b'/message', self.display_message)
+        server.bind(b'/notify', self.notify)
         server.bind(b'/date', self.date)
 
         self.client = OSCClient(b'localhost', 3000)
         self.root = Builder.load_string(KV)
         return self.root
+
+    def notify(self, message):
+        notification.notify(title='Notification Title',
+                        message="%s" % message.decode('utf8'),
+                        timeout=5)
 
     def start_service(self):
         if platform == 'android':
@@ -92,6 +97,12 @@ class ClientServerApp(App):
             raise NotImplementedError(
                 "service start not implemented on this platform"
             )
+
+        # This initializes the notification interface, without it self.notify
+        # will not be able to find an implementation
+        notification.notify(title='Notification Initialize',
+                        timeout=1,
+                        toast=True)
 
     def stop_service(self):
         if self.service:
