@@ -12,7 +12,7 @@ CLIENT = OSCClient('localhost', 3002)
 
 def ping(*_):
     'sends a notification'
-    sleep(5)
+    # sleep(5)  will send notification even while app is paused.
     CLIENT.send_message(
         b'/notify',
         [
@@ -20,6 +20,16 @@ def ping(*_):
             .encode('utf8'),
         ],
     )
+    'answer to ping messages'
+    CLIENT.send_message(
+        b'/message',
+        [
+            ''.join(sample(ascii_letters, randint(10, 20)))
+            .encode('utf8'),
+        ],
+    )
+
+
 
 
 def send_date():

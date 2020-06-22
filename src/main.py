@@ -63,12 +63,17 @@ class ClientServerApp(App):
             port=3002,
             default=True,
         )
+        server.bind(b'/message', self.display_message)
         server.bind(b'/notify', self.notify)
         server.bind(b'/date', self.date)
 
         self.client = OSCClient(b'localhost', 3000)
         self.root = Builder.load_string(KV)
         return self.root
+    
+    def display_message(self, message):
+        if self.root:
+            self.root.ids.label.text += '{}\n'.format(message.decode('utf8'))
 
     def notify(self, message):
         notification.notify(title='Notification Title',
