@@ -19,6 +19,8 @@ jobs:
       - run:
           name: build
           command: |
+            sudo apt-get update
+            sudo apt-get install -y git
             buildozer android debug || echo "done"
 
       - save_cache:
