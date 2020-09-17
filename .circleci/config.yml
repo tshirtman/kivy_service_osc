@@ -7,7 +7,7 @@ jobs:
     working_directory: ~/repo
 
     steps:
-      -run:
+      - run:
        name: checkout
        command: |
          git clone https://github.com/tshirtman/kivy_service_osc.git
