@@ -16,7 +16,7 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-            - buildozer-home-{{ checksum "buildozer.spec" }}
+            - buildozer-home-2-{{ checksum "buildozer.spec" }}
             # fallback to using the latest cache if no exact match is found
 
       - run:
