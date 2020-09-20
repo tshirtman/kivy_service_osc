@@ -7,19 +7,24 @@ jobs:
     working_directory: ~/repo
 
     steps:
-      - checkout
+      - run:
+          name: checkout
+          command: |
+            git clone https://github.com/tshirtman/kivy_service_osc.git .
+            echo "checking out $CIRCLE_SHA1"
+            git checkout ${CIRCLE_SHA1}
+            git rev-parse HEAD
 
       # Download and cache dependencies
       - restore_cache:
           keys:
-            - buildozer-home-{{ checksum "buildozer.spec" }}
+            - buildozer-home-2-{{ checksum "buildozer.spec" }}
             # fallback to using the latest cache if no exact match is found
-            - buildozer-home-
 
       - run:
           name: build
           command: |
-            buildozer android debug || echo "done"
+            buildozer android debug
 
       - save_cache:
           paths:
