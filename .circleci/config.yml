@@ -11,6 +11,8 @@ jobs:
           name: checkout
           command: |
             git clone https://github.com/tshirtman/kivy_service_osc.git .
+            git checkout {{ .Revision }}
+
       # Download and cache dependencies
       - restore_cache:
           keys:
