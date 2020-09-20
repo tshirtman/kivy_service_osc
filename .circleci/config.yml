@@ -11,7 +11,9 @@ jobs:
           name: checkout
           command: |
             git clone https://github.com/tshirtman/kivy_service_osc.git .
-            git checkout ${CIRCLECI_SHA1}
+            echo "checking out $CIRCLE_SHA1"
+            git checkout ${CIRCLE_SHA1}
+            git rev-parse HEAD
 
       # Download and cache dependencies
       - restore_cache:
