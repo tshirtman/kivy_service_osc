@@ -16,7 +16,6 @@ jobs:
           keys:
             - buildozer-home-{{ checksum "buildozer.spec" }}
             # fallback to using the latest cache if no exact match is found
-            - buildozer-home-
 
       - run:
           name: build
