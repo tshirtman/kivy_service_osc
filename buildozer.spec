@@ -89,13 +89,13 @@ fullscreen = 0
 android.permissions = INTERNET
 
 # (int) Android API to use
-android.api = 28
+#android.api = 28
 
 # (int) Minimum API required. You will need to set the android.ndk.api to be as low as this value.
 #android.minapi = 21
 
 # (str) Android NDK version to use
-android.ndk = 19c
+#android.ndk = 19c
 
 # (int) Android NDK API to use (optional). This is the minimum API your app will support. 
 #android.ndk_api = 21
