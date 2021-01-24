@@ -73,9 +73,9 @@ class ClientServerApp(App):
     def start_service(self):
         if platform == 'android':
             service = autoclass(SERVICE_NAME)
-            mActivity = autoclass(u'org.kivy.android.PythonActivity').mActivity
+            self.mActivity = autoclass(u'org.kivy.android.PythonActivity').mActivity
             argument = ''
-            service.start(mActivity, argument)
+            service.start(self.mActivity, argument)
             self.service = service
 
         elif platform in ('linux', 'linux2', 'macos', 'win'):
@@ -95,8 +95,18 @@ class ClientServerApp(App):
 
     def stop_service(self):
         if self.service:
-            self.service.stop()
-            self.service = None
+            if platform == "android":
+                self.service.stop(self.mActivity)
+            elif platform in ('linux', 'linux2', 'macos', 'win'):
+                # The below method will not work. 
+                # Need to develop a method like 
+                # https://www.oreilly.com/library/view/python-cookbook/0596001673/ch06s03.html
+                self.service.stop()
+	    else:
+            	raise NotImplementedError(
+                	"service start not implemented on this platform"
+            	)
+	    self.service = None
 
     def send(self, *args):
         self.client.send_message(b'/ping', [])
