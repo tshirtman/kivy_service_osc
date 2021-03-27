@@ -102,11 +102,11 @@ class ClientServerApp(App):
                 # Need to develop a method like 
                 # https://www.oreilly.com/library/view/python-cookbook/0596001673/ch06s03.html
                 self.service.stop()
-	    else:
+            else:
             	raise NotImplementedError(
                 	"service start not implemented on this platform"
             	)
-	    self.service = None
+            self.service = None
 
     def send(self, *args):
         self.client.send_message(b'/ping', [])
