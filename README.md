@@ -8,7 +8,7 @@ communication between services and a kivy front end.
 
 That examples uses the OSC protocol for simplicity and historical reasons,
 (since an implementation was shipped with kivy historically, and a better one
-is now available as third party). The OSC protocol makes things simple because
+is now found in `oscpy`). The OSC protocol makes things simple because
 it's unconnected, you just send a message, and can forget about it. You bind
 functions to messages you receive. It's simple enough for a lot of things, and
 avoids the burden of maintaining a connection when both the service and front
