@@ -76,7 +76,12 @@ class ClientServerApp(App):
             self.mActivity = autoclass(u'org.kivy.android.PythonActivity').mActivity
             argument = ''
             service.start(self.mActivity, argument)
+            # service.start(self.mActivity, 'small_icon', 'title', 'content' , argument)
             self.service = service
+            
+            # # Service restart
+            # # https://python-for-android.readthedocs.io/en/latest/services/
+            # self.service.mActivity.setAutoRestartService(True)
 
         elif platform in ('linux', 'linux2', 'macos', 'win'):
             from runpy import run_path
