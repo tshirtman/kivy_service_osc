@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "kivy-service-osc"
+version = "0.1.0"
+description = ""
+authors = ["kwuite <kelvin@ludaro.nl>"]
+readme = "README.md"
+packages = [{include = "kivy_service_osc"}]
+
+[tool.poetry.dependencies]
+python = "^3.7.13"
+buildozer = "^1.5.0"
+cython = "^0.29.33"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
